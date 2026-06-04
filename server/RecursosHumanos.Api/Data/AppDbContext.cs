@@ -36,6 +36,12 @@ public class AppDbContext : DbContext
     public DbSet<LlamadaAtencion> LlamadasAtencion => Set<LlamadaAtencion>();
     public DbSet<Designacion> Designaciones => Set<Designacion>();
     public DbSet<Pasaporte> Pasaportes => Set<Pasaporte>();
+    public DbSet<Correspondencia> Correspondencias => Set<Correspondencia>();
+    public DbSet<RevisionJuridica> RevisionesJuridicas => Set<RevisionJuridica>();
+    public DbSet<Archivo> Archivos => Set<Archivo>();
+    public DbSet<Adjunto> Adjuntos => Set<Adjunto>();
+    public DbSet<ArchivoRel> ArchivosRel => Set<ArchivoRel>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -119,10 +125,10 @@ public class AppDbContext : DbContext
             .WithMany(p => p.Reclamaciones)
             .HasForeignKey(r => r.PersonalId);
 
-            modelBuilder.Entity<Vacacion>()
-            .HasOne(v => v.Personal)
-            .WithMany(p => p.Vacaciones)
-            .HasForeignKey(v => v.PersonalId);
+        modelBuilder.Entity<Vacacion>()
+        .HasOne(v => v.Personal)
+        .WithMany(p => p.Vacaciones)
+        .HasForeignKey(v => v.PersonalId);
 
         modelBuilder.Entity<BajaMedica>()
             .HasOne(b => b.Personal)
@@ -158,5 +164,25 @@ public class AppDbContext : DbContext
             .HasOne(pas => pas.Personal)
             .WithMany(p => p.Pasaportes)
             .HasForeignKey(pas => pas.PersonalId);
+
+                    modelBuilder.Entity<Correspondencia>()
+            .HasOne(c => c.Personal)
+            .WithMany(p => p.Correspondencias)
+            .HasForeignKey(c => c.PersonalId);
+
+        modelBuilder.Entity<RevisionJuridica>()
+            .HasOne(r => r.Personal)
+            .WithMany(p => p.RevisionesJuridicas)
+            .HasForeignKey(r => r.PersonalId);
+
+        modelBuilder.Entity<ArchivoRel>()
+            .HasOne(ar => ar.Archivo)
+            .WithMany(a => a.ArchivosRel)
+            .HasForeignKey(ar => ar.ArchivoId);
+
+        modelBuilder.Entity<AuditLog>()
+            .HasOne(a => a.Actor)
+            .WithMany(u => u.AuditLogs)
+            .HasForeignKey(a => a.ActorId);
     }
 }

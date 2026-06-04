@@ -26,4 +26,5 @@ public class Usuario
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<UsuarioRol> UsuarioRoles { get; set; } = new List<UsuarioRol>();
+    public ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
 }

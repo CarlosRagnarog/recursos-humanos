@@ -86,4 +86,7 @@ public class Personal
     public ICollection<LlamadaAtencion> LlamadasAtencion { get; set; } = new List<LlamadaAtencion>();
     public ICollection<Designacion> Designaciones { get; set; } = new List<Designacion>();
     public ICollection<Pasaporte> Pasaportes { get; set; } = new List<Pasaporte>();
+
+    public ICollection<Correspondencia> Correspondencias { get; set; } = new List<Correspondencia>();
+    public ICollection<RevisionJuridica> RevisionesJuridicas { get; set; } = new List<RevisionJuridica>();
 }
