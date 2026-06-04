@@ -77,4 +77,13 @@ public class Personal
     public ICollection<Baja> Bajas { get; set; } = new List<Baja>();
 
     public ICollection<Reclamacion> Reclamaciones { get; set; } = new List<Reclamacion>();
+
+    public ICollection<Vacacion> Vacaciones { get; set; } = new List<Vacacion>();
+    public ICollection<BajaMedica> BajasMedicas { get; set; } = new List<BajaMedica>();
+    public ICollection<Comision> Comisiones { get; set; } = new List<Comision>();
+    public ICollection<Disciplinario> Disciplinarios { get; set; } = new List<Disciplinario>();
+    public ICollection<Felicitacion> Felicitaciones { get; set; } = new List<Felicitacion>();
+    public ICollection<LlamadaAtencion> LlamadasAtencion { get; set; } = new List<LlamadaAtencion>();
+    public ICollection<Designacion> Designaciones { get; set; } = new List<Designacion>();
+    public ICollection<Pasaporte> Pasaportes { get; set; } = new List<Pasaporte>();
 }

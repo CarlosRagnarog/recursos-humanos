@@ -28,6 +28,14 @@ public class AppDbContext : DbContext
     public DbSet<Baja> Bajas => Set<Baja>();
     public DbSet<Reclamacion> Reclamaciones => Set<Reclamacion>();
 
+    public DbSet<Vacacion> Vacaciones => Set<Vacacion>();
+    public DbSet<BajaMedica> BajasMedicas => Set<BajaMedica>();
+    public DbSet<Comision> Comisiones => Set<Comision>();
+    public DbSet<Disciplinario> Disciplinarios => Set<Disciplinario>();
+    public DbSet<Felicitacion> Felicitaciones => Set<Felicitacion>();
+    public DbSet<LlamadaAtencion> LlamadasAtencion => Set<LlamadaAtencion>();
+    public DbSet<Designacion> Designaciones => Set<Designacion>();
+    public DbSet<Pasaporte> Pasaportes => Set<Pasaporte>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -110,5 +118,45 @@ public class AppDbContext : DbContext
             .HasOne(r => r.Personal)
             .WithMany(p => p.Reclamaciones)
             .HasForeignKey(r => r.PersonalId);
+
+            modelBuilder.Entity<Vacacion>()
+            .HasOne(v => v.Personal)
+            .WithMany(p => p.Vacaciones)
+            .HasForeignKey(v => v.PersonalId);
+
+        modelBuilder.Entity<BajaMedica>()
+            .HasOne(b => b.Personal)
+            .WithMany(p => p.BajasMedicas)
+            .HasForeignKey(b => b.PersonalId);
+
+        modelBuilder.Entity<Comision>()
+            .HasOne(c => c.Personal)
+            .WithMany(p => p.Comisiones)
+            .HasForeignKey(c => c.PersonalId);
+
+        modelBuilder.Entity<Disciplinario>()
+            .HasOne(d => d.Personal)
+            .WithMany(p => p.Disciplinarios)
+            .HasForeignKey(d => d.PersonalId);
+
+        modelBuilder.Entity<Felicitacion>()
+            .HasOne(f => f.Personal)
+            .WithMany(p => p.Felicitaciones)
+            .HasForeignKey(f => f.PersonalId);
+
+        modelBuilder.Entity<LlamadaAtencion>()
+            .HasOne(l => l.Personal)
+            .WithMany(p => p.LlamadasAtencion)
+            .HasForeignKey(l => l.PersonalId);
+
+        modelBuilder.Entity<Designacion>()
+            .HasOne(d => d.Personal)
+            .WithMany(p => p.Designaciones)
+            .HasForeignKey(d => d.PersonalId);
+
+        modelBuilder.Entity<Pasaporte>()
+            .HasOne(pas => pas.Personal)
+            .WithMany(p => p.Pasaportes)
+            .HasForeignKey(pas => pas.PersonalId);
     }
 }
