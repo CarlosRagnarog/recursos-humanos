@@ -59,4 +59,12 @@ public class Personal
     public DateTime? DeletedAt { get; set; }
 
     public Grado? Grado { get; set; }
+
+    public InfoPersonal? InfoPersonal { get; set; }
+
+    public ICollection<ContactoEmergencia> ContactosEmergencia { get; set; } = new List<ContactoEmergencia>();
+
+    public ICollection<Dependiente> Dependientes { get; set; } = new List<Dependiente>();
+
+    public ICollection<PersonalEspecialidad> PersonalEspecialidades { get; set; } = new List<PersonalEspecialidad>();
 }
