@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Api.Data;
 using RecursosHumanos.Api.DTOs;
 using RecursosHumanos.Api.Services;
+using System.Security.Claims;
 
 namespace RecursosHumanos.Api.Controllers;
 
@@ -20,7 +22,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto request)
+    public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto request)
     {
         var usuario = await _context.Usuarios
             .Include(u => u.UsuarioRoles)
@@ -61,6 +63,24 @@ public class AuthController : ControllerBase
             Username = usuario.Username ?? "",
             Email = usuario.Email ?? "",
             Roles = roles
+        });
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var username = User.FindFirst(ClaimTypes.Name)?.Value;
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+
+        return Ok(new
+        {
+            id,
+            username,
+            email,
+            roles
         });
     }
 }
