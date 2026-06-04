@@ -7,7 +7,24 @@ import {
   obtenerRegistroCompleto,
   type RegistroPersonalCompleto,
 } from "../services/personalService";
-
+function Field({
+  title,
+  children,
+  className = "",
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <div className="mb-2 inline-block rounded-full bg-[#87a20c] px-5 py-2 text-sm font-black text-white shadow">
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+}
 export default function DatosPersonalesPage() {
   const navigate = useNavigate();
 
@@ -113,7 +130,11 @@ export default function DatosPersonalesPage() {
 
   const guardar = async () => {
     if (!personalId) {
-      Swal.fire("Seleccione personal", "Debe buscar y seleccionar un efectivo.", "warning");
+      Swal.fire(
+        "Seleccione personal",
+        "Debe buscar y seleccionar un efectivo.",
+        "warning",
+      );
       return;
     }
 
@@ -139,23 +160,7 @@ export default function DatosPersonalesPage() {
   const input =
     "w-full rounded-full bg-[#f3f7c8] px-5 py-3 text-slate-800 outline-none ring-1 ring-lime-100 focus:ring-2 focus:ring-lime-500";
 
-  const label =
-    "mb-2 inline-block rounded-full bg-[#87a20c] px-5 py-2 text-sm font-black text-white shadow";
-
-  const Field = ({
-    title,
-    children,
-    className = "",
-  }: {
-    title: string;
-    children: React.ReactNode;
-    className?: string;
-  }) => (
-    <div className={className}>
-      <div className={label}>{title}</div>
-      {children}
-    </div>
-  );
+ 
 
   return (
     <div className="min-h-screen bg-[#f5f8df] p-5 text-[#243300]">
@@ -163,7 +168,8 @@ export default function DatosPersonalesPage() {
         <div>
           <h1 className="text-3xl font-black">Datos Personales</h1>
           <p className="text-sm text-slate-500">
-            Complete información personal, emergencia, dependientes y especialidades.
+            Complete información personal, emergencia, dependientes y
+            especialidades.
           </p>
         </div>
 
@@ -193,7 +199,8 @@ export default function DatosPersonalesPage() {
                   className="block w-full border-b px-5 py-3 text-left hover:bg-lime-50"
                 >
                   <p className="font-bold">
-                    {p.primerNombre} {p.segundoNombre} {p.apPaterno} {p.apMaterno}
+                    {p.primerNombre} {p.segundoNombre} {p.apPaterno}{" "}
+                    {p.apMaterno}
                   </p>
                   <p className="text-sm text-slate-500">
                     Grado: {p.grado} · C.I.: {p.ci}
@@ -207,7 +214,9 @@ export default function DatosPersonalesPage() {
         {seleccionado && (
           <div className="mt-5 grid grid-cols-1 gap-4 rounded-2xl bg-[#f3f7c8] p-5 md:grid-cols-3">
             <div>
-              <p className="text-xs font-bold uppercase text-slate-500">Nombre</p>
+              <p className="text-xs font-bold uppercase text-slate-500">
+                Nombre
+              </p>
               <p className="text-lg font-black">
                 {seleccionado.primerNombre} {seleccionado.segundoNombre}{" "}
                 {seleccionado.apPaterno} {seleccionado.apMaterno}
@@ -215,7 +224,9 @@ export default function DatosPersonalesPage() {
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase text-slate-500">Grado</p>
+              <p className="text-xs font-bold uppercase text-slate-500">
+                Grado
+              </p>
               <p className="text-lg font-black">{seleccionado.grado}</p>
             </div>
 
@@ -241,7 +252,9 @@ export default function DatosPersonalesPage() {
               key={key}
               onClick={() => setTab(key)}
               className={`rounded-full px-8 py-3 font-bold ${
-                tab === key ? "bg-lime-500 text-white" : "bg-lime-100 text-slate-700"
+                tab === key
+                  ? "bg-lime-500 text-white"
+                  : "bg-lime-100 text-slate-700"
               }`}
             >
               {text}
@@ -253,51 +266,111 @@ export default function DatosPersonalesPage() {
           {tab === "datos" && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
               <Field title="Estado civil">
-                <input className={input} value={form.estadoCivil || ""} onChange={(e) => setValue("estadoCivil", e.target.value)} />
+                <select
+                  className={input}
+                  value={form.estadoCivil || ""}
+                  onChange={(e) => setValue("estadoCivil", e.target.value)}
+                >
+                  <option value="">Seleccione...</option>
+                  <option value="Soltero(a)">Soltero(a)</option>
+                  <option value="Casado(a)">Casado(a)</option>
+                  <option value="Concubino(a)">Concubino(a)</option>
+                  <option value="Divorciado(a)">Divorciado(a)</option>
+                  <option value="Viudo(a)">Viudo(a)</option>
+                  <option value="Separado(a)">Separado(a)</option>
+                </select>
               </Field>
 
               <Field title="Fecha de nacimiento">
-                <input className={input} type="date" value={form.fechaNacimiento || ""} onChange={(e) => setValue("fechaNacimiento", e.target.value)} />
+                <input
+                  className={input}
+                  type="date"
+                  value={form.fechaNacimiento || ""}
+                  onChange={(e) => setValue("fechaNacimiento", e.target.value)}
+                />
               </Field>
 
               <Field title="Edad">
-                <input className={input} value={calcularEdad(form.fechaNacimiento)} readOnly placeholder="Auto" />
+                <input
+                  className={input}
+                  value={calcularEdad(form.fechaNacimiento)}
+                  readOnly
+                  placeholder="Auto"
+                />
               </Field>
 
               <Field title="Grupo sanguíneo">
-                <input className={input} value={form.grupoSanguineo || ""} onChange={(e) => setValue("grupoSanguineo", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.grupoSanguineo || ""}
+                  onChange={(e) => setValue("grupoSanguineo", e.target.value)}
+                />
               </Field>
 
               <Field title="Fecha de ingreso a la Policía">
-                <input className={input} type="date" value={form.fechaIngreso || ""} onChange={(e) => setValue("fechaIngreso", e.target.value)} />
+                <input
+                  className={input}
+                  type="date"
+                  value={form.fechaIngreso || ""}
+                  onChange={(e) => setValue("fechaIngreso", e.target.value)}
+                />
               </Field>
 
               <Field title="Años de servicio">
-                <input className={input} value={calcularServicio(form.fechaIngreso)} readOnly placeholder="Auto" />
+                <input
+                  className={input}
+                  value={calcularServicio(form.fechaIngreso)}
+                  readOnly
+                  placeholder="Auto"
+                />
               </Field>
 
               <Field title="Tél. celular">
-                <input className={input} value={form.telCel || ""} onChange={(e) => setValue("telCel", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.telCel || ""}
+                  onChange={(e) => setValue("telCel", e.target.value)}
+                />
               </Field>
 
               <Field title="Tél. particular">
-                <input className={input} value={form.telPart || ""} onChange={(e) => setValue("telPart", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.telPart || ""}
+                  onChange={(e) => setValue("telPart", e.target.value)}
+                />
               </Field>
 
               <Field title="Dirección actual" className="md:col-span-2">
-                <input className={input} value={form.direccion || ""} onChange={(e) => setValue("direccion", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.direccion || ""}
+                  onChange={(e) => setValue("direccion", e.target.value)}
+                />
               </Field>
 
               <Field title="Zona" className="md:col-span-2">
-                <input className={input} value={form.zona || ""} onChange={(e) => setValue("zona", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.zona || ""}
+                  onChange={(e) => setValue("zona", e.target.value)}
+                />
               </Field>
 
               <Field title="SIGEP" className="md:col-span-2">
-                <input className={input} value={form.sigep || ""} onChange={(e) => setValue("sigep", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.sigep || ""}
+                  onChange={(e) => setValue("sigep", e.target.value)}
+                />
               </Field>
 
               <Field title="Correo electrónico" className="md:col-span-2">
-                <input className={input} value={form.email || ""} onChange={(e) => setValue("email", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.email || ""}
+                  onChange={(e) => setValue("email", e.target.value)}
+                />
               </Field>
             </div>
           )}
@@ -305,23 +378,53 @@ export default function DatosPersonalesPage() {
           {tab === "emergencias" && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Field title="Nombres">
-                <input className={input} value={form.emergenciaNombres || ""} onChange={(e) => setValue("emergenciaNombres", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.emergenciaNombres || ""}
+                  onChange={(e) =>
+                    setValue("emergenciaNombres", e.target.value)
+                  }
+                />
               </Field>
 
               <Field title="Apellidos">
-                <input className={input} value={form.emergenciaApellidos || ""} onChange={(e) => setValue("emergenciaApellidos", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.emergenciaApellidos || ""}
+                  onChange={(e) =>
+                    setValue("emergenciaApellidos", e.target.value)
+                  }
+                />
               </Field>
 
               <Field title="Teléfono">
-                <input className={input} value={form.emergenciaTelefono || ""} onChange={(e) => setValue("emergenciaTelefono", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.emergenciaTelefono || ""}
+                  onChange={(e) =>
+                    setValue("emergenciaTelefono", e.target.value)
+                  }
+                />
               </Field>
 
               <Field title="Celular">
-                <input className={input} value={form.emergenciaCelular || ""} onChange={(e) => setValue("emergenciaCelular", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.emergenciaCelular || ""}
+                  onChange={(e) =>
+                    setValue("emergenciaCelular", e.target.value)
+                  }
+                />
               </Field>
 
               <Field title="Dirección" className="md:col-span-2">
-                <input className={input} value={form.emergenciaDireccion || ""} onChange={(e) => setValue("emergenciaDireccion", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.emergenciaDireccion || ""}
+                  onChange={(e) =>
+                    setValue("emergenciaDireccion", e.target.value)
+                  }
+                />
               </Field>
             </div>
           )}
@@ -329,23 +432,52 @@ export default function DatosPersonalesPage() {
           {tab === "dependientes" && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <Field title="Tipo">
-                <input className={input} placeholder="Esposa, Hijo, Pariente..." value={form.dependienteTipo || ""} onChange={(e) => setValue("dependienteTipo", e.target.value)} />
+                <input
+                  className={input}
+                  placeholder="Esposa, Hijo, Pariente..."
+                  value={form.dependienteTipo || ""}
+                  onChange={(e) => setValue("dependienteTipo", e.target.value)}
+                />
               </Field>
 
               <Field title="Nombres">
-                <input className={input} value={form.dependienteNombres || ""} onChange={(e) => setValue("dependienteNombres", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.dependienteNombres || ""}
+                  onChange={(e) =>
+                    setValue("dependienteNombres", e.target.value)
+                  }
+                />
               </Field>
 
               <Field title="Apellidos">
-                <input className={input} value={form.dependienteApellidos || ""} onChange={(e) => setValue("dependienteApellidos", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.dependienteApellidos || ""}
+                  onChange={(e) =>
+                    setValue("dependienteApellidos", e.target.value)
+                  }
+                />
               </Field>
 
               <Field title="Celular">
-                <input className={input} value={form.dependienteCelular || ""} onChange={(e) => setValue("dependienteCelular", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.dependienteCelular || ""}
+                  onChange={(e) =>
+                    setValue("dependienteCelular", e.target.value)
+                  }
+                />
               </Field>
 
               <Field title="Dirección" className="md:col-span-2">
-                <input className={input} value={form.dependienteDireccion || ""} onChange={(e) => setValue("dependienteDireccion", e.target.value)} />
+                <input
+                  className={input}
+                  value={form.dependienteDireccion || ""}
+                  onChange={(e) =>
+                    setValue("dependienteDireccion", e.target.value)
+                  }
+                />
               </Field>
             </div>
           )}
@@ -362,13 +494,26 @@ export default function DatosPersonalesPage() {
           )}
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex flex-wrap justify-end gap-4">
+          <button
+            onClick={() => {
+              setForm({});
+              setSeleccionado(null);
+              setPersonalId(null);
+              setBusqueda("");
+              setTab("datos");
+            }}
+            className="rounded-full bg-slate-500 px-10 py-3 font-black text-white shadow-lg hover:bg-slate-600"
+          >
+            Limpiar
+          </button>
+
           <button
             onClick={guardar}
-            disabled={loading}
+            disabled={loading || !personalId}
             className="rounded-full bg-lime-500 px-10 py-3 font-black text-white shadow-lg hover:bg-lime-600 disabled:opacity-60"
           >
-            {loading ? "Guardando..." : "Guardar datos"}
+            {loading ? "Modificando..." : "Modificar"}
           </button>
         </div>
       </div>
