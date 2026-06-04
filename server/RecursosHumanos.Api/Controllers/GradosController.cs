@@ -19,6 +19,7 @@ public class GradosController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<Grado>>> GetGrados()
     {
         return await _context.Grados
