@@ -67,4 +67,14 @@ public class Personal
     public ICollection<Dependiente> Dependientes { get; set; } = new List<Dependiente>();
 
     public ICollection<PersonalEspecialidad> PersonalEspecialidades { get; set; } = new List<PersonalEspecialidad>();
+
+    public ICollection<Asignacion> Asignaciones { get; set; } = new List<Asignacion>();
+
+    public ICollection<Destino> Destinos { get; set; } = new List<Destino>();
+
+    public ICollection<Situacion> Situaciones { get; set; } = new List<Situacion>();
+
+    public ICollection<Baja> Bajas { get; set; } = new List<Baja>();
+
+    public ICollection<Reclamacion> Reclamaciones { get; set; } = new List<Reclamacion>();
 }

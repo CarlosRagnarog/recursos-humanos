@@ -24,4 +24,6 @@ public class Institucion
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public ICollection<Asignacion> Asignaciones { get; set; } = new List<Asignacion>();
 }

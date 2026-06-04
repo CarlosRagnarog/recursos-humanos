@@ -22,6 +22,12 @@ public class AppDbContext : DbContext
     public DbSet<Dependiente> Dependientes => Set<Dependiente>();
     public DbSet<PersonalEspecialidad> PersonalEspecialidades => Set<PersonalEspecialidad>();
 
+    public DbSet<Asignacion> Asignaciones => Set<Asignacion>();
+    public DbSet<Destino> Destinos => Set<Destino>();
+    public DbSet<Situacion> Situaciones => Set<Situacion>();
+    public DbSet<Baja> Bajas => Set<Baja>();
+    public DbSet<Reclamacion> Reclamaciones => Set<Reclamacion>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -73,5 +79,36 @@ public class AppDbContext : DbContext
             .HasOne(pe => pe.Especialidad)
             .WithMany(e => e.PersonalEspecialidades)
             .HasForeignKey(pe => pe.EspecialidadId);
+
+
+        modelBuilder.Entity<Asignacion>()
+            .HasOne(a => a.Personal)
+            .WithMany(p => p.Asignaciones)
+            .HasForeignKey(a => a.PersonalId);
+
+        modelBuilder.Entity<Asignacion>()
+            .HasOne(a => a.Institucion)
+            .WithMany(i => i.Asignaciones)
+            .HasForeignKey(a => a.InstitucionId);
+
+        modelBuilder.Entity<Destino>()
+            .HasOne(d => d.Personal)
+            .WithMany(p => p.Destinos)
+            .HasForeignKey(d => d.PersonalId);
+
+        modelBuilder.Entity<Situacion>()
+            .HasOne(s => s.Personal)
+            .WithMany(p => p.Situaciones)
+            .HasForeignKey(s => s.PersonalId);
+
+        modelBuilder.Entity<Baja>()
+            .HasOne(b => b.Personal)
+            .WithMany(p => p.Bajas)
+            .HasForeignKey(b => b.PersonalId);
+
+        modelBuilder.Entity<Reclamacion>()
+            .HasOne(r => r.Personal)
+            .WithMany(p => p.Reclamaciones)
+            .HasForeignKey(r => r.PersonalId);
     }
 }
