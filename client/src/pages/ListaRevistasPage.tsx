@@ -30,8 +30,22 @@ export default function ListaRevistasPage() {
   const [mostrarPanel, setMostrarPanel] = useState(false);
   const [nombre, setNombre] = useState("");
   const [informacion, setInformacion] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
   const [archivo, setArchivo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const dias =
+    fechaInicio && fechaFin
+      ? Math.max(
+          0,
+          Math.ceil(
+            (new Date(fechaFin).getTime() -
+              new Date(fechaInicio).getTime()) /
+              (1000 * 60 * 60 * 24)
+          ) + 1
+        )
+      : 0;
 
   useEffect(() => {
     obtenerPersonal().then(setPersonal);
@@ -80,6 +94,8 @@ export default function ListaRevistasPage() {
     setRevistaSeleccionada(null);
     setNombre("");
     setInformacion("");
+    setFechaInicio("");
+    setFechaFin("");
     setArchivo(null);
   };
 
@@ -97,6 +113,8 @@ export default function ListaRevistasPage() {
     setRevistaSeleccionada(revista);
     setNombre(revista.nombre || "");
     setInformacion(revista.informacion || "");
+    setFechaInicio((revista as any).fechaInicio || "");
+    setFechaFin((revista as any).fechaFin || "");
     setArchivo(null);
     setMostrarPanel(true);
   };
@@ -112,6 +130,11 @@ export default function ListaRevistasPage() {
       return;
     }
 
+    if (!fechaInicio || !fechaFin) {
+      Swal.fire("Campo obligatorio", "Debe ingresar fecha inicio y fecha fin.", "warning");
+      return;
+    }
+
     if (!revistaSeleccionada && !archivo) {
       Swal.fire("Archivo obligatorio", "Debe seleccionar un archivo.", "warning");
       return;
@@ -120,11 +143,18 @@ export default function ListaRevistasPage() {
     try {
       setLoading(true);
 
+      const informacionCompleta = JSON.stringify({
+        informacion,
+        fechaInicio,
+        fechaFin,
+        dias,
+      });
+
       if (revistaSeleccionada) {
         await modificarRevista(
           revistaSeleccionada.id,
           nombre,
-          informacion,
+          informacionCompleta,
           archivo
         );
 
@@ -135,7 +165,7 @@ export default function ListaRevistasPage() {
           showConfirmButton: false,
         });
       } else {
-        await crearRevista(personalId, nombre, informacion, archivo!);
+        await crearRevista(personalId, nombre, informacionCompleta, archivo!);
 
         await Swal.fire({
           icon: "success",
@@ -180,11 +210,30 @@ export default function ListaRevistasPage() {
     if (personalId) await cargarRevistas(personalId);
   };
 
+  const leerInfo = (valor?: string) => {
+    if (!valor) {
+      return {
+        informacion: "",
+        fechaInicio: "",
+        fechaFin: "",
+        dias: 0,
+      };
+    }
+
+    try {
+      return JSON.parse(valor);
+    } catch {
+      return {
+        informacion: valor,
+        fechaInicio: "",
+        fechaFin: "",
+        dias: 0,
+      };
+    }
+  };
+
   const input =
     "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none focus:ring-2 focus:ring-lime-500";
-
-  const botonTab =
-    "rounded-full bg-lime-100 px-8 py-3 font-bold text-slate-700 shadow";
 
   const getIconoArchivo = (url?: string) => {
     if (!url) return "📄";
@@ -279,10 +328,6 @@ export default function ListaRevistasPage() {
       </div>
 
       <div className="rounded-[2rem] bg-white p-6 shadow-xl">
-        <div className="mb-6 flex flex-wrap items-center justify-center gap-4">
-          <button className={botonTab}>Impresión Lista de Revista Total</button>
-        </div>
-
         <div className="rounded-[2rem] border border-lime-200 bg-[#fbfde9] p-6 shadow-inner">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-black">Documentos de Revista</h2>
@@ -316,8 +361,8 @@ export default function ListaRevistasPage() {
                 {revistaSeleccionada ? "Modificar documento" : "Añadir documento"}
               </h3>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                <div className="md:col-span-2">
                   <label className="mb-2 block font-bold">
                     Nombre del documento
                   </label>
@@ -330,6 +375,41 @@ export default function ListaRevistasPage() {
                 </div>
 
                 <div>
+                  <label className="mb-2 block font-bold">
+                    Fecha inicio
+                  </label>
+                  <input
+                    className={input}
+                    type="date"
+                    value={fechaInicio}
+                    onChange={(e) => setFechaInicio(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block font-bold">
+                    Fecha fin
+                  </label>
+                  <input
+                    className={input}
+                    type="date"
+                    value={fechaFin}
+                    onChange={(e) => setFechaFin(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block font-bold">
+                    Días
+                  </label>
+                  <input
+                    className={input}
+                    value={dias}
+                    readOnly
+                  />
+                </div>
+
+                <div className="md:col-span-3">
                   <label className="mb-2 block font-bold">
                     Archivo
                   </label>
@@ -349,7 +429,7 @@ export default function ListaRevistasPage() {
                   )}
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="md:col-span-4">
                   <label className="mb-2 block font-bold">
                     Información adicional
                   </label>
@@ -384,6 +464,9 @@ export default function ListaRevistasPage() {
                 <tr>
                   <th className="p-3">Tipo</th>
                   <th className="p-3">Nombre</th>
+                  <th className="p-3">Inicio</th>
+                  <th className="p-3">Fin</th>
+                  <th className="p-3">Días</th>
                   <th className="p-3">Información adicional</th>
                   <th className="p-3">Fecha registro</th>
                   <th className="p-3 text-center">Archivo</th>
@@ -394,55 +477,62 @@ export default function ListaRevistasPage() {
               <tbody>
                 {revistas.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-10 text-center text-slate-400">
+                    <td colSpan={9} className="p-10 text-center text-slate-400">
                       No hay revistas registradas. Use el botón Añadir para cargar una nueva.
                     </td>
                   </tr>
                 ) : (
-                  revistas.map((r) => (
-                    <tr key={r.id} className="border-t hover:bg-lime-50">
-                      <td className="p-3 text-2xl">
-                        {getIconoArchivo(r.archivoUrl)}
-                      </td>
-                      <td className="p-3 font-bold">{r.nombre}</td>
-                      <td className="p-3">{r.informacion || "-"}</td>
-                      <td className="p-3">
-                        {r.createdAt
-                          ? new Date(r.createdAt).toLocaleDateString()
-                          : "-"}
-                      </td>
-                      <td className="p-3 text-center">
-                        {r.archivoUrl ? (
-                          <a
-                            href={`${API_BASE}${r.archivoUrl}`}
-                            target="_blank"
-                            className="rounded-full bg-blue-600 px-4 py-2 text-sm font-bold text-white"
-                          >
-                            Ver
-                          </a>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-                      <td className="p-3">
-                        <div className="flex justify-center gap-2">
-                          <button
-                            onClick={() => abrirModificar(r)}
-                            className="rounded-full bg-yellow-400 px-4 py-2 text-sm font-bold text-slate-800"
-                          >
-                            Modificar
-                          </button>
+                  revistas.map((r) => {
+                    const info = leerInfo(r.informacion);
 
-                          <button
-                            onClick={() => eliminar(r)}
-                            className="rounded-full bg-red-500 px-4 py-2 text-sm font-bold text-white"
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                    return (
+                      <tr key={r.id} className="border-t hover:bg-lime-50">
+                        <td className="p-3 text-2xl">
+                          {getIconoArchivo(r.archivoUrl)}
+                        </td>
+                        <td className="p-3 font-bold">{r.nombre}</td>
+                        <td className="p-3">{info.fechaInicio || "-"}</td>
+                        <td className="p-3">{info.fechaFin || "-"}</td>
+                        <td className="p-3">{info.dias || "-"}</td>
+                        <td className="p-3">{info.informacion || "-"}</td>
+                        <td className="p-3">
+                          {r.createdAt
+                            ? new Date(r.createdAt).toLocaleDateString()
+                            : "-"}
+                        </td>
+                        <td className="p-3 text-center">
+                          {r.archivoUrl ? (
+                            <a
+                              href={`${API_BASE}${r.archivoUrl}`}
+                              target="_blank"
+                              className="rounded-full bg-blue-600 px-4 py-2 text-sm font-bold text-white"
+                            >
+                              Ver
+                            </a>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+                        <td className="p-3">
+                          <div className="flex justify-center gap-2">
+                            <button
+                              onClick={() => abrirModificar(r)}
+                              className="rounded-full bg-yellow-400 px-4 py-2 text-sm font-bold text-slate-800"
+                            >
+                              Modificar
+                            </button>
+
+                            <button
+                              onClick={() => eliminar(r)}
+                              className="rounded-full bg-red-500 px-4 py-2 text-sm font-bold text-white"
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

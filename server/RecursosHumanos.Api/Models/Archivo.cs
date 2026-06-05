@@ -12,6 +12,8 @@ public class Archivo
 
     [Column("tipo")]
     public string? Tipo { get; set; }
+    public DateOnly? FechaInicio { get; set; }
+    public DateOnly? FechaFin { get; set; }
 
     [Column("codigo")]
     public string? Codigo { get; set; }
