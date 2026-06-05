@@ -375,4 +375,162 @@ public class MeritosDemeritosController : ControllerBase
 
         return Ok(new { message = "Registro agregado correctamente" });
     }
+    [HttpPut("{tipo}/{id}")]
+public async Task<IActionResult> Update(string tipo, long id, [FromBody] MeritoDemeritoDto dto)
+{
+    tipo = tipo.ToLower();
+
+    if (tipo == "destinos" || tipo == "cambio-destino")
+    {
+        var item = await _context.Destinos.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.UnidadAnterior = dto.UnidadAnterior;
+        item.UnidadActual = dto.UnidadActual;
+        item.CargoActual = dto.CargoActual;
+        item.MemoNro = dto.NroMemo;
+        item.FechaDestino = dto.Fecha;
+        item.EstadoPersonal = dto.EstadoPersonal;
+        item.Observaciones = dto.Observaciones;
+    }
+    else if (tipo == "vacaciones")
+    {
+        var item = await _context.Vacaciones.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.Nro = dto.Nro;
+        item.NroMemo = dto.NroMemo;
+        item.Desde = dto.Desde;
+        item.Hasta = dto.Hasta;
+        item.Dias = dto.Dias;
+        item.Observaciones = dto.Observaciones;
+        item.AutoridadFirma = dto.AutoridadFirma;
+    }
+    else if (tipo == "bajas-medicas")
+    {
+        var item = await _context.BajasMedicas.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.Nro = dto.Nro;
+        item.NroFolio = dto.NroFolio;
+        item.Desde = dto.Desde;
+        item.Hasta = dto.Hasta;
+        item.InstitucionMedica = dto.InstitucionMedica;
+        item.Observaciones = dto.Observaciones;
+    }
+    else if (tipo == "comisiones")
+    {
+        var item = await _context.Comisiones.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.Nro = dto.Nro;
+        item.NroFolio = dto.NroFolio;
+        item.NroMemo = dto.NroMemo;
+        item.Desde = dto.Desde;
+        item.Hasta = dto.Hasta;
+        item.UnidadOrg = dto.UnidadOrg;
+        item.AutoridadFirma = dto.AutoridadFirma;
+    }
+    else if (tipo == "didipi")
+    {
+        var item = await _context.Disciplinarios.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.Nro = dto.Nro;
+        item.NroFolio = dto.NroFolio;
+        item.NroMemo = dto.NroMemo;
+        item.Fecha = dto.Fecha;
+        item.Causal = dto.Causal;
+        item.Observaciones = dto.Observaciones;
+        item.AutoridadFirma = dto.AutoridadFirma;
+    }
+    else if (tipo == "felicitaciones")
+    {
+        var item = await _context.Felicitaciones.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.Nro = dto.Nro;
+        item.NroFolio = dto.NroFolio;
+        item.NroMemo = dto.NroMemo;
+        item.FechaEntrega = dto.Fecha;
+        item.Motivo = dto.Motivo;
+        item.AutoridadFirma = dto.AutoridadFirma;
+    }
+    else if (tipo == "llamadas-atencion")
+    {
+        var item = await _context.LlamadasAtencion.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.Nro = dto.Nro;
+        item.NroFolio = dto.NroFolio;
+        item.NroMemo = dto.NroMemo;
+        item.FechaEntrega = dto.Fecha;
+        item.Motivo = dto.Motivo;
+        item.AutoridadFirma = dto.AutoridadFirma;
+    }
+    else if (tipo == "designaciones")
+    {
+        var item = await _context.Designaciones.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.Nro = dto.Nro;
+        item.NroFolio = dto.NroFolio;
+        item.NroMemo = dto.NroMemo;
+        item.FechaEntrega = dto.Fecha;
+        item.NombreDesignacion = dto.Designacion;
+        item.AutoridadFirma = dto.AutoridadFirma;
+    }
+    else if (tipo == "pasaportes")
+    {
+        var item = await _context.Pasaportes.FindAsync(id);
+        if (item == null) return NotFound(new { message = "Registro no encontrado" });
+
+        item.NroFolio = dto.NroFolio;
+        item.NroPasaporte = dto.NroPasaporte;
+        item.Dias = dto.Dias;
+        item.FechaSalida = dto.Desde;
+        item.FechaLlegada = dto.Hasta;
+        item.Destino = dto.Destino;
+        item.Motivo = dto.Motivo;
+    }
+    else
+    {
+        return BadRequest(new { message = "Tipo no válido" });
+    }
+
+    await _context.SaveChangesAsync();
+
+    return Ok(new { message = "Registro modificado correctamente" });
+}
+
+[HttpDelete("{tipo}/{id}")]
+public async Task<IActionResult> Delete(string tipo, long id)
+{
+    tipo = tipo.ToLower();
+
+    object? item = tipo switch
+    {
+        "destinos" => await _context.Destinos.FindAsync(id),
+        "cambio-destino" => await _context.Destinos.FindAsync(id),
+        "vacaciones" => await _context.Vacaciones.FindAsync(id),
+        "bajas-medicas" => await _context.BajasMedicas.FindAsync(id),
+        "comisiones" => await _context.Comisiones.FindAsync(id),
+        "didipi" => await _context.Disciplinarios.FindAsync(id),
+        "felicitaciones" => await _context.Felicitaciones.FindAsync(id),
+        "llamadas-atencion" => await _context.LlamadasAtencion.FindAsync(id),
+        "designaciones" => await _context.Designaciones.FindAsync(id),
+        "pasaportes" => await _context.Pasaportes.FindAsync(id),
+        _ => null
+    };
+
+    if (item == null)
+    {
+        return NotFound(new { message = "Registro no encontrado" });
+    }
+
+    _context.Remove(item);
+    await _context.SaveChangesAsync();
+
+    return Ok(new { message = "Registro eliminado correctamente" });
+}
 }

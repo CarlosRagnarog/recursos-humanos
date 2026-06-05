@@ -44,3 +44,16 @@ export const crearMeritoDemerito = async (data: MeritoDemerito) => {
   const response = await api.post("/MeritosDemeritos", data);
   return response.data;
 };
+export const modificarMeritoDemerito = async (
+  tipo: string,
+  id: number,
+  data: MeritoDemerito
+) => {
+  const response = await api.put(`/MeritosDemeritos/${tipo}/${id}`, data);
+  return response.data;
+};
+
+export const eliminarMeritoDemerito = async (tipo: string, id: number) => {
+  const response = await api.delete(`/MeritosDemeritos/${tipo}/${id}`);
+  return response.data;
+};
